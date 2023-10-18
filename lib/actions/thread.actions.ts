@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import Thread from "../models/thread.model";
 import User from "../models/user.model";
 import { connectToDB } from "../mongoose"
+import Community from '../models/community.model';
 
 interface Params {
     text: string,
@@ -16,18 +17,30 @@ interface Params {
 
 // create thread
 export async function createThread({ text, author, communityId, path }: Params) {
+    connectToDB();
     try {
-        connectToDB();
+        const communityIdObject = await Community.findOne(
+            { id: communityId },
+            { _id: 1 }
+            ).exec();
+
         const createdThread = await Thread.create({
             text,
             author,
-            community: null,
+            community: communityIdObject,
         });
 
         //Update user model
         const user = await User.findById(author);
         user.threads.push(createdThread._id);
         await user.save();
+
+        //Update community model
+        if (communityIdObject) {
+            const community = await Community.findById(communityIdObject);
+            community.threads.push(createdThread._id);
+            await community.save();
+        }
 
         //revalidate path
         revalidatePath(path);
@@ -50,8 +63,12 @@ export async function fetchThreads(pageNumber = 1, pageSize = 20){
         .limit(pageSize)
         .populate({path: 'author', model: 'User'})
         .populate({
+            path: "community",
+            model: Community,
+          })
+        .populate({
             path: 'children',
-            model: 'Thread',
+            model: 'Thread', 
             populate: {
                 path: 'author',
                 model: 'User',
@@ -75,6 +92,11 @@ export async function fetchThreadById(id: string) {
         connectToDB();
         const thread = await Thread.findById(id)
         .populate({path: 'author', model: 'User', select: "_id id name image"})
+        .populate({
+            path: "community",
+            model: Community,
+            select: "_id id name image",
+          })
         .populate({
             path: 'children',
             model: 'Thread',

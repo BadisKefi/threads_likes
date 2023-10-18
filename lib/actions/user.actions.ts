@@ -1,64 +1,70 @@
-"use server"
+"use server";
 
-import { revalidatePath } from "next/cache";
-import  User  from "../models/user.model";
-import { connectToDB } from "../mongoose";
-import Thread from "../models/thread.model";
 import { FilterQuery, SortOrder } from "mongoose";
+import { revalidatePath } from "next/cache";
+
+import Community from "../models/community.model";
+import Thread from "../models/thread.model";
+import User from "../models/user.model";
+
+import { connectToDB } from "../mongoose";
+
+
 
 interface Params {
-    userId: string;
-    username: string;
-    name: string;
-    bio: string;
-    image: string;
-    path: string;
-  }
-
-  // update User 
-export async function updateUser({
-    userId,
-    bio,
-    name,
-    path,
-    username,
-    image,
-  }: Params): Promise<void> {
-    try {
-      connectToDB();
-  
-      await User.findOneAndUpdate(
-        { id: userId },
-        {
-          username: username.toLowerCase(),
-          name,
-          bio,
-          image,
-          onboarded: true,
-        },
-        { upsert: true }
-      );
-  
-      if (path === "/profile/edit") {
-        revalidatePath(path);
-      }
-    } catch (error: any) {
-      throw new Error(`Failed to create/update user: ${error.message}`);
-    }
+  userId: string;
+  username: string;
+  name: string;
+  bio: string;
+  image: string;
+  path: string;
 }
 
-// Fetches the user with the given userId
-export async function fetchUser(userId: string){
-  try{
+export async function fetchUser(userId: string) {
+  try {
     connectToDB();
-    return await User.findOne({ id: userId }); // ! Don't forget to add populate for communities .poulate({path: 'communities', model: 'Community'})
+
+    return await User.findOne({ id: userId }).populate({
+      path: "communities",
+      model: Community,
+    });
   } catch (error: any) {
     throw new Error(`Failed to fetch user: ${error.message}`);
   }
 }
 
-// Fetches all threads authored by the user with the given userId
-export async function fetchUserPosts(userId: string) {
+export async function updateUser({
+  userId,
+  bio,
+  name,
+  path,
+  username,
+  image,
+}: Params): Promise<void> {
+  try {
+    connectToDB();
+
+    await User.findOneAndUpdate(
+      { id: userId },
+      {
+        username: username.toLowerCase(),
+        name,
+        bio,
+        image,
+        onboarded: true,
+      },
+      { upsert: true }
+    );
+
+    if (path === "/profile/edit") {
+      revalidatePath(path);
+    }
+  } catch (error: any) {
+    throw new Error(`Failed to create/update user: ${error.message}`);
+  }
+}
+
+export async function fetchUserThreads(userId: string) {
   try {
     connectToDB();
 
@@ -66,7 +72,12 @@ export async function fetchUserPosts(userId: string) {
     const threads = await User.findOne({ id: userId }).populate({
       path: "threads",
       model: Thread,
-      populate: 
+      populate: [
+        {
+          path: "community",
+          model: Community,
+          select: "name id image _id", // Select the "name" and "_id" fields from the "Community" model
+        },
         {
           path: "children",
           model: Thread,
@@ -75,7 +86,8 @@ export async function fetchUserPosts(userId: string) {
             model: User,
             select: "name image id", // Select the "name" and "_id" fields from the "User" model
           },
-        }
+        },
+      ],
     });
     return threads;
   } catch (error) {
@@ -84,7 +96,7 @@ export async function fetchUserPosts(userId: string) {
   }
 }
 
-// Fetch all users
+// Almost similar to Thead (search + pagination) and Community (search + pagination)
 export async function fetchUsers({
   userId,
   searchString = "",
@@ -143,7 +155,6 @@ export async function fetchUsers({
   }
 }
 
-// Get Activity
 export async function getActivity(userId: string) {
   try {
     connectToDB();
@@ -172,4 +183,3 @@ export async function getActivity(userId: string) {
     throw error;
   }
 }
-

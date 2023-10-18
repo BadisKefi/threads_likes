@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@/components/theme-provider"
 import { ClerkProvider } from '@clerk/nextjs'
 import '../globals.css'
 import type { Metadata } from 'next'
@@ -19,6 +20,12 @@ export default function RootLayout({ children, } : { children: React.ReactNode }
     <ClerkProvider>
       <html lang="en">
       <body className={inter.className}>
+      <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
           <TopBar />
 
           <main className='flex flex-row'>
@@ -30,6 +37,8 @@ export default function RootLayout({ children, } : { children: React.ReactNode }
           </main>
 
           <BottomBar />
+          
+        </ThemeProvider>
         </body>
       </html> 
     </ClerkProvider>
