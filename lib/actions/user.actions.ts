@@ -21,9 +21,8 @@ interface Params {
 }
 
 export async function fetchUser(userId: string) {
+  connectToDB();
   try {
-    connectToDB();
-
     return await User.findOne({ id: userId }).populate({
       path: "communities",
       model: Community,
@@ -41,9 +40,8 @@ export async function updateUser({
   username,
   image,
 }: Params): Promise<void> {
+  connectToDB();
   try {
-    connectToDB();
-
     await User.findOneAndUpdate(
       { id: userId },
       {
@@ -65,9 +63,8 @@ export async function updateUser({
 }
 
 export async function fetchUserThreads(userId: string) {
+  connectToDB();
   try {
-    connectToDB();
-
     // Find all threads authored by the user with the given userId
     const threads = await User.findOne({ id: userId }).populate({
       path: "threads",
@@ -110,9 +107,8 @@ export async function fetchUsers({
   pageSize?: number;
   sortBy?: SortOrder;
 }) {
+  connectToDB();
   try {
-    connectToDB();
-
     // Calculate the number of users to skip based on the page number and page size.
     const skipAmount = (pageNumber - 1) * pageSize;
 
@@ -156,9 +152,8 @@ export async function fetchUsers({
 }
 
 export async function getActivity(userId: string) {
+  connectToDB();
   try {
-    connectToDB();
-
     // Find all threads created by the user
     const userThreads = await Thread.find({ author: userId });
 

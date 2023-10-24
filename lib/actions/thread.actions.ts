@@ -49,6 +49,19 @@ export async function createThread({ text, author, communityId, path }: Params) 
     }
 }
 
+export async function updateThread({ threadId, updatedText, path }: {
+    threadId: string, updatedText: string, path: string}){
+      connectToDB();
+      try {
+        const thread = await Thread.findById(threadId);
+        thread.text = updatedText;
+        await thread.save();
+        revalidatePath(path);
+      } catch (error: any) {
+        throw new Error(`Error updating thread: ${error.message}`);
+      }
+}
+
 // fetch threads that have no parents (top level threads)
 export async function fetchThreads(pageNumber = 1, pageSize = 20){
     try {
@@ -226,6 +239,16 @@ export async function deleteThread(id: string, path: string): Promise<void> {
     } catch (error: any) {
       throw new Error(`Failed to delete thread: ${error.message}`);
     }
+}
+
+export async function fetchThread(id: string) {
+    try {
+      connectToDB();
+      const thread = await Thread.findById(id);
+      return thread;
+    } catch (error: any) {
+      throw new Error(`Error fetching thread: ${error.message}`);
+    }  
 }
 
 

@@ -1,4 +1,3 @@
-import React from 'react'
 import { redirect } from 'next/navigation';
 import { currentUser } from '@clerk/nextjs';
 import { fetchUser } from '@/lib/actions/user.actions';
@@ -16,7 +15,7 @@ const page = async () => {
       <>
         <h1 className='head-text'>Create Thread</h1>
   
-        <PostThread userId={JSON.stringify(userInfo._id)} />
+        <PostThread userId={JSON.stringify(userInfo._id)} action="create" threadId="null" />
       </>
     );
 }

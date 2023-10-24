@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
@@ -20,7 +20,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { ThreadValidation } from '@/lib/validations/thread';
 import path from 'path'
 import { create } from 'domain';
-import { createThread } from '@/lib/actions/thread.actions';
+import { createThread, fetchThreadById, updateThread } from '@/lib/actions/thread.actions';
 import Thread from '@/lib/models/thread.model';
 
 type Props = {
@@ -36,7 +36,7 @@ type Props = {
 }
 
 
-const PostThread = ({ userId }: {userId: string}) => {
+const PostThread = ({ userId , action, thread }: {userId: string, action: string, thread: any}) => {
 
   const router = useRouter();
   const pathname = usePathname();
@@ -45,21 +45,23 @@ const PostThread = ({ userId }: {userId: string}) => {
   const form = useForm({
       resolver: zodResolver(ThreadValidation),
       defaultValues: {
-        thread: '',
-        //accountId: userId,
+        thread: action === "edit" ? thread.text : " ",
       }
   })
 
   const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
-
+    if(action === "edit"){
+    await updateThread({ threadId: thread._id, updatedText: values.thread, path: pathname})
+    router.back();
+    }else {
     await createThread({ 
       text: values.thread,
       author: JSON.parse(userId),
       communityId : organization ? organization.id : null ,
       path: pathname,
     });
-
     router.push("/");
+  }
   };
 
   return (
@@ -87,7 +89,7 @@ const PostThread = ({ userId }: {userId: string}) => {
           )}
         />
         <Button type='submit' className='bg-primary-500'>
-          Post Thread
+          {action === 'create' ? 'Post thread': 'Update thread'}
         </Button>      
   </form>
   </Form>

@@ -51,17 +51,16 @@ function DeleteThread({
         className='cursor-pointer object-contain'
       />
     </AlertDialogTrigger>
-    <AlertDialogContent className="bg-slate-950">
+    <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle className="text-light-1">Are you absolutely sure ?</AlertDialogTitle>
-        <AlertDialogDescription className="text-light-2">
-          This action cannot be undone. This will permanently delete the thread
-          and all its data.
+        <AlertDialogTitle>Are you absolutely sure ?</AlertDialogTitle>
+        <AlertDialogDescription>
+          This action cannot be undone. This will permanently delete the thread.
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
-        <AlertDialogAction className="bg-red-800" onClick={async () => {
+        <AlertDialogAction onClick={async () => {
           await deleteThread(JSON.parse(threadId), pathname);
           if (!parentId || !isComment) {
             router.push("/");

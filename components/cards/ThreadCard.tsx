@@ -3,6 +3,25 @@ import Link from "next/link";
 
 import { formatDateString } from "@/lib/utils";
 import DeleteThread from "../forms/DeleteThread";
+import EditThread from "../forms/EditThread";
+
+import { Copy } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import  Share  from "@/components/forms/Share" 
+
 
 interface Props {
   id: string;
@@ -39,6 +58,7 @@ function ThreadCard({
   comments,
   isComment,
 }: Props) {
+
   return (
     <article
       className={`flex w-full flex-col rounded-xl ${
@@ -87,20 +107,7 @@ function ThreadCard({
                     className='cursor-pointer object-contain'
                   />
                 </Link>
-                <Image
-                  src='/assets/repost.svg'
-                  alt='heart'
-                  width={24}
-                  height={24}
-                  className='cursor-pointer object-contain'
-                />
-                <Image
-                  src='/assets/share.svg'
-                  alt='heart'
-                  width={24}
-                  height={24}
-                  className='cursor-pointer object-contain'
-                />
+                <Share id={id} />
               </div>
 
               {isComment && comments.length > 0 && (
@@ -113,7 +120,13 @@ function ThreadCard({
             </div>
           </div>
         </div>
-
+        <EditThread
+          threadId={id}
+          currentUserId={currentUserId}
+          authorId={author.id}
+          parentId={parentId}
+          isComment={isComment}
+        />
         <DeleteThread
           threadId={JSON.stringify(id)}
           currentUserId={currentUserId}
