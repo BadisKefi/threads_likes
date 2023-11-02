@@ -9,8 +9,8 @@ const page = async () => {
   
     // fetch organization list created by user
     const userInfo = await fetchUser(user.id);
-    if(!(userInfo?.status === 'active')) redirect('/activate-account');
     if (!userInfo?.onboarded) redirect("/onboarding");
+    if(!(userInfo?.status === 'active')) redirect('/activate-account');
   
     return (
       <>

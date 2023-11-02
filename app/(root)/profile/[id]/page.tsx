@@ -14,9 +14,9 @@ async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
   if (!user) return null;
   const loggedInUser = await fetchUser(user.id);
-
-  if(!(loggedInUser?.status === 'active')) redirect('/activate-account');
+  
   if (!loggedInUser?.onboarded) redirect("/onboarding");
+  if(!(loggedInUser?.status === 'active')) redirect('/activate-account');
 
   const userInfo = await fetchUser(params.id);
 
