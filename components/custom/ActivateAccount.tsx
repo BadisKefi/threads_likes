@@ -9,6 +9,9 @@ import { redirect, useRouter } from "next/navigation";
 export default function ActivateAccount({ userInfo } : { userInfo: any }) {
     const toast = useToast();
     const router = useRouter();
+    if(!userInfo.id) {
+        return null;
+    }
     if(userInfo.status === 'active') {
         redirect('/');
     }
