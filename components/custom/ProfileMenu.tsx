@@ -41,6 +41,8 @@ import { useRouter } from "next/navigation";
 
 export default function ProfileMenu({ accountId, authUserId, role, type} : {accountId: string, authUserId:string, role:string, type: string}) {
 const router = useRouter();
+const toast = useToast();
+
   return (
     <div>
         <Menu placement='bottom-end' >
@@ -154,7 +156,6 @@ const router = useRouter();
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction onClick={async () => {
                     const result = await banUser(accountId);
-                    const toast = useToast();
                     toast({
                       title: 'Account banned.',
                       description: "You have successfully banned this account.",
@@ -187,7 +188,6 @@ const router = useRouter();
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction onClick={async () => {
                     const result = await unbanUser(accountId);
-                    const toast = useToast();
                     toast({
                       title: 'Account deactivated.',
                       description: "You have successfully unbanned this account.",

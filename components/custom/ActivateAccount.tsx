@@ -8,6 +8,8 @@ import { redirect, useRouter } from "next/navigation";
 
 export default function ActivateAccount({ userInfo } : { userInfo: any }) {
     const router = useRouter();
+    const toast = useToast();
+
     if(!userInfo?.id) {
         return null;
     }
@@ -31,7 +33,6 @@ export default function ActivateAccount({ userInfo } : { userInfo: any }) {
        variant='solid' 
        className="mt-10"
        onClick={async () => {
-        const toast = useToast();
         toast({
           title: 'Account activated.',
           description: "Welcome back !You're now connected",
