@@ -9,13 +9,14 @@ const page = async () => {
   
     // fetch organization list created by user
     const userInfo = await fetchUser(user.id);
+    if(!(userInfo?.status === 'active')) redirect('/activate-account');
     if (!userInfo?.onboarded) redirect("/onboarding");
   
     return (
       <>
         <h1 className='head-text'>Create Thread</h1>
   
-        <PostThread userId={JSON.stringify(userInfo._id)} action="create" threadId="null" />
+        <PostThread userId={JSON.stringify(userInfo._id)} action="create" thread="null" />
       </>
     );
 }

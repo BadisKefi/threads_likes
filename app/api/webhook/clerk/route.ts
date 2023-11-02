@@ -80,7 +80,7 @@ export const POST = async (request: Request) => {
         created_by
       );
 
-      return NextResponse.json({ message: "User created" }, { status: 201 });
+      return NextResponse.json({ message: "Community created" }, { status: 201 });
     } catch (err) {
       console.log(err);
       return NextResponse.json(
@@ -146,7 +146,8 @@ export const POST = async (request: Request) => {
       console.log("removed", evnt?.data);
 
       // @ts-ignore
-      await removeUserFromCommunity(public_user_data.user_id, organization.id);
+      await removeUserFromCommunity(JSON.parse(JSON.stringify(public_user_data.user_id)), organization.id);
+
 
       return NextResponse.json({ message: "Member removed" }, { status: 201 });
     } catch (err) {

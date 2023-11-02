@@ -234,6 +234,8 @@ export async function deleteThread(id: string, path: string): Promise<void> {
         { _id: { $in: Array.from(uniqueCommunityIds) } },
         { $pull: { threads: { $in: descendantThreadIds } } }
       );
+
+      
   
       revalidatePath(path);
     } catch (error: any) {

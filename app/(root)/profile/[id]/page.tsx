@@ -13,15 +13,19 @@ import { fetchUser } from "@/lib/actions/user.actions";
 async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
   if (!user) return null;
+  const loggedInUser = await fetchUser(user.id);
+
+  if(!(loggedInUser?.status === 'active')) redirect('/activate-account');
+  if (!loggedInUser?.onboarded) redirect("/onboarding");
 
   const userInfo = await fetchUser(params.id);
-  if (!userInfo?.onboarded) redirect("/onboarding");
 
   return (
     <section>
       <ProfileHeader
         accountId={userInfo.id}
         authUserId={user.id}
+        role={loggedInUser.role}
         name={userInfo.name}
         username={userInfo.username}
         imgUrl={userInfo.image}

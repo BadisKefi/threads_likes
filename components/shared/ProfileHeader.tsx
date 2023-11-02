@@ -1,9 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
+import ProfileMenu from "../custom/ProfileMenu";
 
 interface Props {
   accountId: string;
   authUserId: string;
+  role: string;
   name: string;
   username: string;
   imgUrl: string;
@@ -14,6 +16,7 @@ interface Props {
 function ProfileHeader({
   accountId,
   authUserId,
+  role,
   name,
   username,
   imgUrl,
@@ -40,20 +43,11 @@ function ProfileHeader({
             <p className='text-base-medium text-gray-1'>@{username}</p>
           </div>
         </div>
-        {accountId === authUserId && type !== "Community" && (
-          <Link href='/profile/edit'>
-            <div className='flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2'>
-              <Image
-                src='/assets/edit.svg'
-                alt='logout'
-                width={16}
-                height={16}
-              />
 
-              <p className='text-light-2 max-sm:hidden'>Edit</p>
-            </div>
-          </Link>
+        {(accountId === authUserId || role === 'admin') && type !== "Community" && (
+        <ProfileMenu accountId={accountId} authUserId={authUserId} role={role} type={type ? type : ''} />
         )}
+        
       </div>
 
       <p className='mt-6 max-w-lg text-base-regular text-light-2'>{bio}</p>

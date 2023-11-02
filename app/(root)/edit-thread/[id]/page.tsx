@@ -8,12 +8,13 @@ const { ObjectId } = require('mongodb');
 
 
 const page = async ({ params }: { params: { id: string } }) => {
-    const user = await currentUser();
-    if (!user) return null;
+  const user = await currentUser();
+  if (!user) return null;
+  const userInfo = await fetchUser(user.id);
+  if(!(userInfo?.status === 'active')) redirect('/activate-account');
+  if (!userInfo?.onboarded) redirect("/onboarding");
   
     // fetch organization list created by user
-    const userInfo = await fetchUser(user.id);
-    if (!userInfo?.onboarded) redirect("/onboarding");
     const thread = await fetchThread(params.id);
     return (
         <>

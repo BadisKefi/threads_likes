@@ -26,6 +26,21 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  status: {
+    type: String,
+    enum: ["active", "inactive"],
+    default: "active",
+  },
+  etat: {
+    type: String,
+    enum: ["banned", "unbanned"],
+    default: "unbanned",
+  },
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
   communities: [
     {
       type: mongoose.Schema.Types.ObjectId,

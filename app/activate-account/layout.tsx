@@ -23,15 +23,11 @@ export default function RootLayout({ children, } : { children: React.ReactNode }
       <html lang="en">
       <body className={inter.className}>
       <Providers>
-          <TopBar />
           <main className='flex flex-row'>
-            <LeftSideBar />
             <section className='main-container'>
               <div className='w-full max-w-4xl'>{children}</div>
             </section>
-            <RightSideBar />
           </main>
-          <BottomBar />
         </Providers>
           </body>
       </html>
@@ -39,3 +35,4 @@ export default function RootLayout({ children, } : { children: React.ReactNode }
     
   )
 }
+

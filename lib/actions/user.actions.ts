@@ -1,3 +1,4 @@
+import { Axios } from './../../node_modules/axios/index.d';
 "use server";
 
 import { FilterQuery, SortOrder } from "mongoose";
@@ -8,6 +9,9 @@ import Thread from "../models/thread.model";
 import User from "../models/user.model";
 
 import { connectToDB } from "../mongoose";
+
+const axios = require('axios');
+
 
 
 
@@ -21,8 +25,8 @@ interface Params {
 }
 
 export async function fetchUser(userId: string) {
-  connectToDB();
   try {
+    connectToDB();
     return await User.findOne({ id: userId }).populate({
       path: "communities",
       model: Community,
@@ -40,8 +44,8 @@ export async function updateUser({
   username,
   image,
 }: Params): Promise<void> {
-  connectToDB();
   try {
+    connectToDB();
     await User.findOneAndUpdate(
       { id: userId },
       {
@@ -63,8 +67,8 @@ export async function updateUser({
 }
 
 export async function fetchUserThreads(userId: string) {
-  connectToDB();
   try {
+    connectToDB();
     // Find all threads authored by the user with the given userId
     const threads = await User.findOne({ id: userId }).populate({
       path: "threads",
@@ -107,8 +111,8 @@ export async function fetchUsers({
   pageSize?: number;
   sortBy?: SortOrder;
 }) {
-  connectToDB();
   try {
+    connectToDB();
     // Calculate the number of users to skip based on the page number and page size.
     const skipAmount = (pageNumber - 1) * pageSize;
 
@@ -152,8 +156,8 @@ export async function fetchUsers({
 }
 
 export async function getActivity(userId: string) {
-  connectToDB();
   try {
+    connectToDB();
     // Find all threads created by the user
     const userThreads = await Thread.find({ author: userId });
 
@@ -176,5 +180,90 @@ export async function getActivity(userId: string) {
   } catch (error) {
     console.error("Error fetching replies: ", error);
     throw error;
+  }
+}
+
+export async function banUser(userId: string){
+  connectToDB();
+  try {
+    const user = await User.findOne({id: userId}).exec();
+    if(!user){
+      throw new Error(`User not found`);
+    }
+    const response  = axios.post(`https://api.clerk.com/v1/users/${userId}/ban`, {}, {
+      headers: {
+        'Authorization': `Bearer ${process.env.CLERK_SECRET_KEY}`,
+        'Content-Type': "application/json",
+      }
+    });
+    await user.updateOne({etat: "banned"});
+    return response;
+  } catch (error: any) {
+    throw new Error(`Failed to ban user: ${error.message}`);
+  }
+}
+
+export async function unbanUser(userId: string){
+  connectToDB();
+  try {
+    const user = await User.findOne({id: userId}).exec();
+    if(!user){
+      throw new Error(`User not found`);
+    }
+    const response  = axios.post(`https://api.clerk.com/v1/users/${userId}/unban`, {}, {
+      headers: {
+        'Authorization': `Bearer ${process.env.CLERK_SECRET_KEY}`,
+        'Content-Type': "application/json",
+      }
+    });
+    await user.updateOne({etat: "banned"});
+    return response;
+  } catch (error: any) {
+    throw new Error(`Failed to unban user: ${error.message}`);
+  }
+}
+
+export async function deleteAccount(userId: string){
+  connectToDB();
+  try {
+    const user = await User.findOne({id: userId}).exec();
+    if(!user){
+      throw new Error(`User not found`);
+    }
+    const response  = axios.delete(`https://api.clerk.com/v1/users/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${process.env.CLERK_SECRET_KEY}`,
+        'Content-Type': "application/json",
+      }
+    });
+    await user.deleteOne();
+    await Thread.deleteMany({author: user._id});
+    return response;
+  } catch (error: any) {
+    throw new Error(`Failed to delete user: ${error.message}`);
+  }
+}
+
+export async function activateAccount(userId: string) {
+  connectToDB();
+  try {
+    const user  = await User.findOneAndUpdate({id: userId}, {status: "active"});
+    if(!user){
+      throw new Error(`User not found`);
+    }
+  } catch (error: any) {
+    throw new Error(`Failed to activate user: ${error.message}`);
+  }
+}
+
+export async function deasctivateAccount(userId: string) {
+  connectToDB();
+  try {
+    const user  = await User.findOneAndUpdate({id: userId}, {status: "inactive"});
+    if(!user){
+      throw new Error(`User not found`);
+    }
+  } catch (error: any) {
+    throw new Error(`Failed to deactivate user: ${error.message}`);
   }
 }

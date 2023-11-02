@@ -208,9 +208,8 @@ export async function removeUserFromCommunity(
   userId: string,
   communityId: string
 ) {
+  connectToDB();
   try {
-    connectToDB();
-
     const userIdObject = await User.findOne({ id: userId }, { _id: 1 });
     const communityIdObject = await Community.findOne(
       { id: communityId },
@@ -223,7 +222,11 @@ export async function removeUserFromCommunity(
 
     if (!communityIdObject) {
       throw new Error("Community not found");
-    }
+    }       
+    console.log("User : ", userIdObject, "Community : ", communityIdObject);
+
+    // Delete all threads created by the user in the community
+    await Thread.deleteMany({ community: communityIdObject._id, author: userIdObject._id });
 
     // Remove the user's _id from the members array in the community
     await Community.updateOne(

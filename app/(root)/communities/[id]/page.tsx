@@ -9,10 +9,15 @@ import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { fetchCommunityDetails } from "@/lib/actions/community.actions";
+import { redirect } from "next/navigation";
+import { fetchUser } from "@/lib/actions/user.actions";
 
 async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
   if (!user) return null;
+  const userInfo = await fetchUser(user.id);
+  if(!(userInfo?.status === 'active')) redirect('/activate-account');
+  if (!userInfo?.onboarded) redirect("/onboarding");
 
   const communityDetails = await fetchCommunityDetails(params.id);
 
@@ -21,6 +26,7 @@ async function Page({ params }: { params: { id: string } }) {
       <ProfileHeader
         accountId={communityDetails.createdBy.id}
         authUserId={user.id}
+        role={userInfo.role}
         name={communityDetails.name}
         username={communityDetails.username}
         imgUrl={communityDetails.image}

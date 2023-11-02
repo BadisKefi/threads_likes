@@ -21,6 +21,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import  Share  from "@/components/forms/Share" 
+import { fetchUser } from "@/lib/actions/user.actions";
 
 
 interface Props {
@@ -47,7 +48,7 @@ interface Props {
   isComment?: boolean;
 }
 
-function ThreadCard({
+async function ThreadCard({
   id,
   currentUserId,
   parentId,
@@ -58,6 +59,8 @@ function ThreadCard({
   comments,
   isComment,
 }: Props) {
+  const loggedInUser = await fetchUser(currentUserId);
+
 
   return (
     <article
@@ -121,7 +124,7 @@ function ThreadCard({
           </div>
         </div>
         <EditThread
-          threadId={id}
+          threadId={JSON.stringify(id)}
           currentUserId={currentUserId}
           authorId={author.id}
           parentId={parentId}
@@ -130,6 +133,7 @@ function ThreadCard({
         <DeleteThread
           threadId={JSON.stringify(id)}
           currentUserId={currentUserId}
+          currentUserRole={loggedInUser.role}
           authorId={author.id}
           parentId={parentId}
           isComment={isComment}
