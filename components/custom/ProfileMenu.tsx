@@ -87,7 +87,14 @@ const router = useRouter();
                                <AlertDialogCancel>Cancel</AlertDialogCancel>
                                <AlertDialogAction onClick={async () => {
                                  const result = await deleteAccount(accountId);
-                               }}>Delete</AlertDialogAction>
+                               }}>
+                               <SignOutButton signOutCallback={() => { 
+                                router.push("/sign-in")
+                                }}
+                                >
+                                Delete
+                              </SignOutButton>
+                                </AlertDialogAction>
                              </AlertDialogFooter>
                            </AlertDialogContent>
                          </AlertDialog>
@@ -116,14 +123,6 @@ const router = useRouter();
                               }}
                               >
                               <SignOutButton signOutCallback={() => { 
-                                const toast = useToast();
-                                toast({
-                                  title: 'Account desactivated.',
-                                  description: "Your account is now desactivated.",
-                                  status: 'success',
-                                  duration: 9000,
-                                  isClosable: true,
-                                })
                                 router.push("/sign-in")
                                 }}
                                 >
@@ -155,6 +154,14 @@ const router = useRouter();
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction onClick={async () => {
                     const result = await banUser(accountId);
+                    const toast = useToast();
+                    toast({
+                      title: 'Account banned.',
+                      description: "You have successfully banned this account.",
+                      status: 'success',
+                      duration: 9000,
+                      isClosable: true,
+                    })
                   }}>Bann</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -180,6 +187,14 @@ const router = useRouter();
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction onClick={async () => {
                     const result = await unbanUser(accountId);
+                    const toast = useToast();
+                    toast({
+                      title: 'Account deactivated.',
+                      description: "You have successfully unbanned this account.",
+                      status: 'success',
+                      duration: 9000,
+                      isClosable: true,
+                    })
                   }}>Unban</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
