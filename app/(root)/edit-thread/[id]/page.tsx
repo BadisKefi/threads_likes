@@ -16,7 +16,7 @@ const page = async ({ params }: { params: { id: string } }) => {
   if(!(userInfo?.status === 'active')) redirect('/activate-account');
   
     // fetch organization list created by user
-    const thread = await fetchThread(params.id);
+    const thread = await fetchThread(JSON.stringify(params.id));
     return (
         <>
           <h1 className='head-text'>Edit Thread</h1>

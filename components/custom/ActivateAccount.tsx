@@ -35,7 +35,7 @@ export default function ActivateAccount({ userInfo } : { userInfo: any }) {
        onClick={async () => {
         toast({
           title: 'Account activated.',
-          description: "Welcome back !You're now connected",
+          description: "Welcome back ! You're now connected",
           status: 'success',
           duration: 9000,
           isClosable: true,

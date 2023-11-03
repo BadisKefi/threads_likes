@@ -37,10 +37,11 @@ import {
       } from "@/components/ui/alert-dialog"
 import { banUser, deasctivateAccount, deleteAccount, unbanUser } from "@/lib/actions/user.actions";
 import { SignOutButton } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
-export default function ProfileMenu({ accountId, authUserId, role, type} : {accountId: string, authUserId:string, role:string, type: string}) {
+export default function ProfileMenu({ accountId, authUserId, role, etat, type} : {accountId: string, authUserId:string, role:string, etat: string, type: string}) {
 const router = useRouter();
+const path = usePathname();
 const toast = useToast();
 
   return (
@@ -137,7 +138,7 @@ const toast = useToast();
             )}
             
             
-            {(accountId !== authUserId && role === 'admin') && type !== "Community" && (
+            {(accountId !== authUserId && role === 'admin' && etat === 'unbanned') && type !== "Community" && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                     <MenuItem icon={<LockIcon />}
@@ -155,14 +156,18 @@ const toast = useToast();
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction onClick={async () => {
-                    const result = await banUser(accountId);
-                    toast({
-                      title: 'Account banned.',
-                      description: "You have successfully banned this account.",
-                      status: 'success',
-                      duration: 9000,
-                      isClosable: true,
+                     const examplePromise = new Promise((resolve, reject) => {
+                      setTimeout(() => resolve(200), 5000)
                     })
+            
+                    // Will display the loading toast until the promise is either resolved
+                    // or rejected.
+                    toast.promise(examplePromise, {
+                      success: { title: 'Account banned successfully', description: 'Done' },
+                      error: { title: 'Something went wrong', description: 'Something wrong' },
+                      loading: { title: 'Banning account ...', description: 'Please wait' },
+                    })
+                    const result = await banUser(accountId,path);
                   }}>Bann</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -170,7 +175,7 @@ const toast = useToast();
             )}
             
            
-            {(accountId !== authUserId && role === 'admin') && type !== "Community" && (
+            {(accountId !== authUserId && role === 'admin' && etat === 'banned') && type !== "Community" && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <MenuItem icon={<UnlockIcon />}>
@@ -187,14 +192,18 @@ const toast = useToast();
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction onClick={async () => {
-                    const result = await unbanUser(accountId);
-                    toast({
-                      title: 'Account deactivated.',
-                      description: "You have successfully unbanned this account.",
-                      status: 'success',
-                      duration: 9000,
-                      isClosable: true,
-                    })
+                    const unbanPromise = new Promise((resolve, reject) => {
+                      setTimeout(() => resolve(200), 5000);
+                    });
+                    
+                    // Display the loading toast until the promise is either resolved or rejected.
+                    toast.promise(unbanPromise, {
+                      success: { title: 'Account unbanned successfully', description: 'Done' },
+                      error: { title: 'Something went wrong', description: 'Unable to unban account' },
+                      loading: { title: 'Unbanning account...', description: 'Please wait' },
+                    });
+                    
+                    const result = await unbanUser(accountId, path);
                   }}>Unban</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

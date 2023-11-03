@@ -6,6 +6,7 @@ interface Props {
   accountId: string;
   authUserId: string;
   role: string;
+  etat :string
   name: string;
   username: string;
   imgUrl: string;
@@ -17,6 +18,7 @@ function ProfileHeader({
   accountId,
   authUserId,
   role,
+  etat,
   name,
   username,
   imgUrl,
@@ -45,7 +47,7 @@ function ProfileHeader({
         </div>
 
         {(accountId === authUserId || role === 'admin') && type !== "Community" && (
-        <ProfileMenu accountId={accountId} authUserId={authUserId} role={role} type={type ? type : ''} />
+        <ProfileMenu accountId={accountId} authUserId={authUserId} role={role} etat={etat} type={type ? type : ''} />
         )}
         
       </div>

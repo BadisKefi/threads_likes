@@ -124,7 +124,7 @@ async function ThreadCard({
           </div>
         </div>
         <EditThread
-          threadId={JSON.stringify(id)}
+          threadId={id}
           currentUserId={currentUserId}
           authorId={author.id}
           parentId={parentId}

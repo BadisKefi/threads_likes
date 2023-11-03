@@ -10,7 +10,7 @@ export function Providers({
   }) {
   return (
     <CacheProvider>
-      <ChakraProvider>
+      <ChakraProvider toastOptions={{ defaultOptions: { position: 'top' } }}>
         {children}
       </ChakraProvider>
     </CacheProvider>

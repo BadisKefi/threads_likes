@@ -9,6 +9,7 @@ import Thread from "../models/thread.model";
 import User from "../models/user.model";
 
 import { connectToDB } from "../mongoose";
+import { usePathname } from 'next/navigation';
 
 const axios = require('axios');
 
@@ -183,7 +184,7 @@ export async function getActivity(userId: string) {
   }
 }
 
-export async function banUser(userId: string){
+export async function banUser(userId: string, path: string){
   connectToDB();
   try {
     const user = await User.findOne({id: userId}).exec();
@@ -197,13 +198,14 @@ export async function banUser(userId: string){
       }
     });
     await user.updateOne({etat: "banned"});
+    revalidatePath(path);
     return response;
   } catch (error: any) {
     throw new Error(`Failed to ban user: ${error.message}`);
   }
 }
 
-export async function unbanUser(userId: string){
+export async function unbanUser(userId: string, path: string){
   connectToDB();
   try {
     const user = await User.findOne({id: userId}).exec();
@@ -216,7 +218,8 @@ export async function unbanUser(userId: string){
         'Content-Type': "application/json",
       }
     });
-    await user.updateOne({etat: "banned"});
+    await user.updateOne({etat: "unbanned"});
+    revalidatePath(path);
     return response;
   } catch (error: any) {
     throw new Error(`Failed to unban user: ${error.message}`);

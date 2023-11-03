@@ -6,6 +6,7 @@ import Thread from "../models/thread.model";
 import User from "../models/user.model";
 import { connectToDB } from "../mongoose"
 import Community from '../models/community.model';
+import mongoose from 'mongoose';
 
 interface Params {
     text: string,
@@ -246,7 +247,7 @@ export async function deleteThread(id: string, path: string): Promise<void> {
 export async function fetchThread(id: string) {
     try {
       connectToDB();
-      const thread = await Thread.findById(id);
+      const thread = await Thread.findById(JSON.parse(id));
       return thread;
     } catch (error: any) {
       throw new Error(`Error fetching thread: ${error.message}`);

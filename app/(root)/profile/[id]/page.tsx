@@ -26,6 +26,7 @@ async function Page({ params }: { params: { id: string } }) {
         accountId={userInfo.id}
         authUserId={user.id}
         role={loggedInUser.role}
+        etat={userInfo.etat}
         name={userInfo.name}
         username={userInfo.username}
         imgUrl={userInfo.image}
