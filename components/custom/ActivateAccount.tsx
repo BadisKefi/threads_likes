@@ -41,9 +41,7 @@ export default function ActivateAccount({ userInfo } : { userInfo: any }) {
           isClosable: true,
         })
         await activateAccount(userInfo.id);
-        setTimeout(() => {
           router.push('/');
-        }, 3000);
        }
       }
       
