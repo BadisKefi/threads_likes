@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -22,6 +23,8 @@ import {
 } from "@/components/ui/dialog"
 import  Share  from "@/components/forms/Share" 
 import { fetchUser } from "@/lib/actions/user.actions";
+import Like from "@/components/forms/Like";
+
 
 
 interface Props {
@@ -46,6 +49,7 @@ interface Props {
     };
   }[];
   isComment?: boolean;
+  likers: any;
 }
 
 async function ThreadCard({
@@ -58,9 +62,12 @@ async function ThreadCard({
   createdAt,
   comments,
   isComment,
+  likers,
 }: Props) {
   const loggedInUser = await fetchUser(currentUserId);
 
+  console.log("::::::::::::::::::::::::::" + likers)
+  
 
   return (
     <article
@@ -94,13 +101,7 @@ async function ThreadCard({
 
             <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
               <div className='flex gap-3.5'>
-                <Image
-                  src='/assets/heart-gray.svg'
-                  alt='heart'
-                  width={24}
-                  height={24}
-                  className='cursor-pointer object-contain'
-                />
+                <Like id={id} loggedInUserId={loggedInUser._id} likers={likers} />
                 <Link href={`/thread/${id}`}>
                   <Image
                     src='/assets/reply.svg'

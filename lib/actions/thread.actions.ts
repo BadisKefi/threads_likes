@@ -63,6 +63,22 @@ export async function updateThread({ threadId, updatedText, path }: {
       }
 }
 
+export async function updateThreadLikes({ threadId, userId, path }: {
+  threadId: string, userId: any, path: string}){
+    connectToDB();
+    try {
+      const thread = await Thread.findById(threadId);
+      thread.likes += 1;
+      thread.likers.push(userId);
+      await thread.save();
+      revalidatePath(path);
+      return thread;
+
+    } catch (error: any) {
+      throw new Error(`Error adding the like to thread: ${error.message}`);
+    }
+}
+
 // fetch threads that have no parents (top level threads)
 export async function fetchThreads(pageNumber = 1, pageSize = 20){
     try {
@@ -88,6 +104,10 @@ export async function fetchThreads(pageNumber = 1, pageSize = 20){
                 model: 'User',
                 select: "_id name parentId image"
             }
+        })
+        .populate({
+          path: 'likers',
+          model: 'User',
         }).exec();
 
         const totalThreadsCount = await Thread.countDocuments({ parentId: {$in: [null, undefined]} });

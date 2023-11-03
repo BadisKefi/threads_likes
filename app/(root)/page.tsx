@@ -19,7 +19,6 @@ export default async function Home() {
 
   const result = await fetchThreads(1,10);
 
-
   return (
    <>
       <h1 className="head-text text-left">Home</h1>
@@ -39,6 +38,7 @@ export default async function Home() {
                 community={thread.community}
                 createdAt={thread.createdAt}
                 comments={thread.children}
+                likers={thread.likers}
                />
             ))}
             </>
