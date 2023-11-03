@@ -37,7 +37,7 @@ export default function ActivateAccount({ userInfo } : { userInfo: any }) {
           title: 'Account activated.',
           description: "Welcome back ! You're now connected",
           status: 'success',
-          duration: 9000,
+          duration: 3000,
           isClosable: true,
         })
         await activateAccount(userInfo.id);
